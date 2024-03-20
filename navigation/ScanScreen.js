@@ -1,46 +1,30 @@
-import { StyleSheet, Text, View, Image, TextInput, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Pressable } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-
 import Card from '../components/Card';
-import { exportedUserName } from './Login';
+import { exportedUserName } from '../src/Login';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseconfig';
 
 
-export default function Scan({ navigation }) {
+
+export default function ScanScreen({ navigation }) {
 
 
 
-    //loading fonts
+
     let [fontsLoaded] = useFonts({
         "MetaNormal-Regular": require("../assets/fonts/MetaNormal-Regular.ttf"),
         "Meta-Bold-Roman": require("../assets/fonts/Meta-Bold-Roman.ttf"),
     });
 
-    //Displays splashscreen till the fonts loaded
-    useEffect(() => {
-        async function prepare() {
-            await SplashScreen.preventAutoHideAsync();
-        }
-        prepare();
-    }, [])
-
-    if (!fontsLoaded) {
-        return undefined
-    } else {
-        SplashScreen.hideAsync();
-    }
-
-    //firebase
     const [nolNumber, setNolNumber] = useState('');
 
 
     function sendToDatabase() {
         const userDocRef = doc(db, 'users', exportedUserName)
-
 
         setDoc(doc(userDocRef, "nolCards", nolNumber),
             {
@@ -55,35 +39,36 @@ export default function Scan({ navigation }) {
             }).catch((error) => {
                 console.log(error)
             })
-
-        setDoc(doc(db, 'NolCards', nolNumber),
-            {
-                userName: exportedUserName
-            }).then(() => {
-                console.log('nol card submitted')
-            }).catch((error) => {
-                console.log(error)
-            })
-
+        setNolNumber("");
     }
 
+    //Displays splashscreen till the fonts loaded
+    useEffect(() => {
+        async function prepare() {
+            await SplashScreen.preventAutoHideAsync();
+        }
+        prepare();
+    }, [])
 
-
-
+    if (!fontsLoaded) {
+        return undefined
+    } else {
+        SplashScreen.hideAsync();
+    }
     return (
-
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.root}>
+        <View>
             <Header welcome="Add Card" subText="Please enter the Nol Number found behind your card"></Header>
             <View style={styles.root}>
                 <View style={styles.card}></View>
                 <Card Text={nolNumber}></Card>
 
+
                 <View style={styles.enterID}>
                     <TextInput
                         style={styles.IDText}
-                        placeholder='Please enter your Nol ID'
                         maxLength={11}
                         value={nolNumber}
+                        placeholder='Please enter your Nol ID'
                         onChangeText={(nolNumber) => { setNolNumber(nolNumber) }}
                     />
                 </View>
@@ -91,19 +76,17 @@ export default function Scan({ navigation }) {
                     {/* Put onPress as well */}
                     <Pressable style={styles.Button}
                         onPress={() => {
-                            navigation.navigate('Main')
+                            navigation.navigate('Home')
                             sendToDatabase()
-
-                        }}>
+                        }
+                        }>
                         <Text style={styles.buttonText}>
                             Continue
                         </Text>
                     </Pressable>
                 </View>
             </View>
-        </KeyboardAvoidingView>
-
-
+        </View>
     )
 }
 
@@ -117,6 +100,7 @@ const styles = StyleSheet.create({
     card: {
         marginTop: 35,
     },
+
     enterID: {
         marginTop: 100,
         borderBottomWidth: 1,
@@ -124,11 +108,13 @@ const styles = StyleSheet.create({
         width: 220,
         borderBottomColor: "#99999E"
     },
+
     IDText: {
         paddingBottom: 5,
         fontFamily: "Meta-Bold-Roman",
         fontSize: 16
     },
+
     loginButton: {
         marginTop: 100,
         width: 220,
@@ -136,6 +122,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
 
     },
+
     Button: {
         alignItems: 'center',
         width: 300,
@@ -150,9 +137,13 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         shadowOffset: { width: -2, height: 4 },
     },
+
     buttonText: {
         color: "white",
         fontFamily: "MetaNormal-Regular",
         fontSize: 18,
     }
+
+
 })
+

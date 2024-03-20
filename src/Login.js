@@ -2,8 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TextInput, Pressable } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { doc, setDoc } from 'firebase/firestore'
+import { db } from '../firebaseconfig';
+
+export let exportedUserName = '';
 
 export default function Login({ navigation }) {
     //Loads the fonts
@@ -11,6 +15,9 @@ export default function Login({ navigation }) {
         "MetaNormal-Regular": require("../assets/fonts/MetaNormal-Regular.ttf"),
         "Meta-Bold-Roman": require("../assets/fonts/Meta-Bold-Roman.ttf"),
     });
+
+
+
 
     //Displays splashscreen till the fonts loaded
     useEffect(() => {
@@ -26,6 +33,25 @@ export default function Login({ navigation }) {
         SplashScreen.hideAsync();
     }
 
+    //Firebase 
+    const [userName, setName] = useState('');
+
+    exportedUserName = userName;
+
+
+    //function to send values to firebase
+    function create() {
+
+        //submit data
+        setDoc(doc(db, 'users', userName),     //users is the name of the collection, LA is the ID
+            {
+                username: userName,
+            })
+
+    }
+
+
+
     //returns the view
     return (
         <View>
@@ -36,6 +62,8 @@ export default function Login({ navigation }) {
                         <TextInput
                             style={styles.input}
                             placeholder='Username'
+                            value={userName}
+                            onChangeText={(userName) => { setName(userName) }}
                         />
                     </View>
                     <View style={styles.Password}>
@@ -52,7 +80,11 @@ export default function Login({ navigation }) {
                     <View style={styles.loginButton}>
                         {/* Put onPress as well */}
                         <Pressable style={styles.Button}
-                            onPress={() => navigation.navigate('Scan')}>
+                            onPress={() => {
+                                navigation.navigate('Scan')
+                                create()
+
+                            }}>
                             <Text style={styles.buttonText}>
                                 Login
                             </Text>
@@ -207,3 +239,4 @@ const styles = StyleSheet.create({
     },
 
 });
+

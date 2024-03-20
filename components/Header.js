@@ -68,8 +68,6 @@ const styles = StyleSheet.create({
         fontFamily: "MetaNormal-Regular",
         fontSize: 15,
         color: "#77767f"
-
-
     },
 })
 

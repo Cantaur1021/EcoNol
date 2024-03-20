@@ -15,13 +15,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chimmhoe.EcoNol"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.NFC"
+      ],
+      "package": "com.chimmhoe.EcoNol"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +35,14 @@
       "react-native-nfc-manager",
       "expo-font",
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "57bd2e3d-1f64-49ce-bc17-61cdb813a5a8"
+      }
+    }
   }
 }
