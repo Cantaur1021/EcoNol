@@ -1,5 +1,4 @@
 
-
 import { StyleSheet, Text, View, Image, TextInput, Pressable, Dimensions, Button, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
@@ -13,10 +12,7 @@ import NavBar from '../components/NavBar';
 import { doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore'
 import { db } from '../firebaseconfig';
 import { exportedUserName } from '../src/Login';
-
-
-
-
+// import dataValue from '../data';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -30,17 +26,12 @@ export default function Home({ navigation }) {
 
     const [dataValue, setData] = useState([]);
     const [deposits, setDeposits] = useState([]);
-    const [checkDeposit, setCheck] = useState('');
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const docSnap = await getDocs(collection(db, '/users/' + exportedUserName + '/nolCards'))
-                const checkDeposit = await getDoc(doc(db, 'users', exportedUserName));
-
-                const depositsSnap = await getDocs(collection(db, '/users/' + exportedUserName + '/Deposits/'))
-                let depositData = [];
                 let data = [];
 
                 docSnap.forEach((doc) => {
@@ -50,25 +41,14 @@ export default function Home({ navigation }) {
                     });
                 });
                 setData(data);
-
-
-                depositsSnap.forEach((doc) => {
-                    depositData.push({
-                        ...doc.data(),
-                        id: doc.id
-                    })
-                })
-                setDeposits(depositData);
-                console.log(depositData)
-
-                if (checkDeposit.exists()) {
-                    const documentData = checkDeposit.data()
-                    setCheck(documentData);
-                    console.log(documentData)
-                }
-                else {
-                    console.log('No such Document')
-                }
+                console.log(data)
+                const depositDetails = data.map(item => ({
+                    type: item.type,
+                    location: item.location,
+                    time: item.time,
+                    depositPoints: item.depositPoints
+                }));
+                setDeposits(depositDetails);
 
             } catch (error) {
                 console.log('Error fetching data: ', error)
@@ -82,10 +62,41 @@ export default function Home({ navigation }) {
 
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const renderDeposits = () => {
-        if (checkDeposit.depositsMade === 'false') {
+    const renderScroll = ({ item, index }) => {
+        <View style={styles.depositsContainer}>
+            <View style={styles.depositTextContainer}>
+                <Text style={styles.typeText}>{item.type}</Text>
+                <Text style={styles.locationText}>{item.location}</Text>
+                <Text style={styles.locationText}>{item.time}</Text>
+            </View>
+            <View style={styles.depositPointsContainer}>
+                <Text style={styles.points}>+{item.depositPoints}</Text>
+                <Text style={styles.nolPoints}>NolPoints</Text>
+            </View>
+        </View>
+    }
+
+    const renderItem = ({ item, index }) => {
+        if (item.depositsMade === "false") {
             return (
-                <View>
+                <View style={styles.carouselRoot}>
+                    <View style={styles.carouselContainer}>
+                        <Card Text={item.nolNumber} balance={'AED' + item.credit}></Card>
+                        <Text style={styles.carouselText}>Nol Card</Text>
+                        {/* make it so that the subtext can be changed and updated in data folder */}
+                    </View>
+                    <View style={styles.pointSystem}>
+                        <View style={styles.point}>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.pointNumber}>{item.nolPoints} </Text>
+                                <Text style={styles.pointsText}>NolPoints</Text>
+                            </View>
+                            <Pressable style={styles.redeemButton} onPress={() => navigation.navigate('Maps')}>
+                                <Text style={styles.redeemText}>Redeem</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+
                     <View style={styles.recentDepositContainer}>
                         <View style={styles.RecentDeposits}>
                             <Text style={styles.DepositText}>Recent Deposits</Text>
@@ -101,62 +112,49 @@ export default function Home({ navigation }) {
         }
         else {
             return (
-                <View>
+                <View style={styles.carouselRoot}>
+                    <View style={styles.carouselContainer}>
+                        <Card Text={item.nolNumber} balance={'AED' + item.credit}></Card>
+                        <Text style={styles.carouselText}>Nol Card</Text>
+                        {/* make it so that the subtext can be changed and updated in data folder */}
+                    </View>
+                    <View style={styles.pointSystem}>
+                        <View style={styles.point}>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.pointNumber}>{item.nolPoints} </Text>
+                                <Text style={styles.pointsText}>NolPoints</Text>
+                            </View>
+                            <Pressable style={styles.redeemButton} onPress={() => navigation.navigate('Maps')}>
+                                <Text style={styles.redeemText}>Redeem</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+
                     <View style={styles.recentDepositContainer}>
                         <View style={styles.RecentDeposits}>
                             <Text style={styles.DepositText}>Recent Deposits</Text>
                         </View>
                     </View>
-                    <ScrollView
+                    <FlatList
                         showsHorizontalScrollIndicator={false}
                         decelerationRate={0}
                         snapToAlignment={"center"}
                         scrollEnabled={true}
                         horizontal={false}
+                        renderItem={renderScroll}
+                        data={deposits}
                         style={styles.scrollView}>
-                        {deposits.map((deposit, index) => (
-                            <View key={index} style={styles.depositsContainer}>
-                                <View style={styles.depositTextContainer}>
-                                    <Text style={styles.typeText}>{deposit.type}</Text>
-                                    <Text style={styles.locationText}>{deposit.location}</Text>
-                                    <Text style={styles.locationText}>{deposit.time}</Text>
-                                </View>
-                                <View style={styles.depositPointsContainer}>
-                                    <Text style={styles.points}>+{deposit.depositPoints}</Text>
-                                    <Text style={styles.nolPoints}>NolPoints</Text>
-                                </View>
-                            </View>
-                        ))}
-                    </ScrollView>
+
+                    </FlatList>
                 </View>
             )
+
         }
+
+
+
+
     }
-
-    const renderItem = ({ item, index }) => {
-
-        return (
-            <View style={styles.carouselRoot}>
-                <View style={styles.carouselContainer}>
-                    <Card Text={item.nolNumber} balance={'AED' + item.credit}></Card>
-                    <Text style={styles.carouselText}>Nol Card</Text>
-                    {/* make it so that the subtext can be changed and updated in data folder */}
-                </View>
-                <View style={styles.pointSystem}>
-                    <View style={styles.point}>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.pointNumber}>{item.nolPoints} </Text>
-                            <Text style={styles.pointsText}>NolPoints</Text>
-                        </View>
-                        <Pressable style={styles.redeemButton} onPress={() => navigation.navigate('Maps')}>
-                            <Text style={styles.redeemText}>Redeem</Text>
-                        </Pressable>
-                    </View>
-                </View>
-            </View>
-        )
-    }
-
 
 
     //For dot logic
@@ -205,61 +203,64 @@ export default function Home({ navigation }) {
         <View>
             <Header welcome="Home" subText="Say hello to the future of sustainability"></Header>
             <View style={styles.root}>
-                <View style={styles.carouselContainer}>
-                    <FlatList
-                        style={{ flexGrow: 0 }}
-                        layout='default'
-                        data={dataValue}
-                        renderItem={renderItem}
-                        sliderWidth={sliderWidth}
-                        containerCustomStyle={{ flexGrow: 0 }}
-                        onScroll={handleScroll}
-                        horizontal
-                        pagingEnabled
-                        showsHorizontalScrollIndicator={false}
-                        keyExtractor={(item) => item.id}
-                    />
+                <View style={styles.carouselCContainer}></View>
 
-                </View>
+                <FlatList
+                    style={{ flexGrow: 0 }}
+                    layout='default'
+                    data={dataValue}
+                    renderItem={renderItem}
+                    sliderWidth={sliderWidth}
+                    containerCustomStyle={{ flexGrow: 0 }}
+                    onScroll={handleScroll}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item) => item.id}
+
+                />
                 <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
                     {renderDotIndicators()}
                 </View>
 
 
 
-                <View>
-                    {renderDeposits()}
-                </View>
-
                 {/* <View style={styles.navBar}>
                     <NavBar page="Home"></NavBar>
                 </View> */}
+
+
+
             </View>
+
+
+
+
         </View>
     )
 }
-
-
 
 const styles = StyleSheet.create({
     root: {
         width: "100%",
         height: "100%",
         backgroundColor: "#F6F6FF",
-
+        alignItems: 'center',
     },
     recentDepositContainer: {
-
+        marginLeft: 25,
         marginTop: 25,
     },
 
     carouselRoot: {
         width: screenWidth,
-        height: 300
+        height: screenHeight - 320
+
     },
 
     carouselContainer: {
-
+        marginLeft: 20,
+        marginRight: 20,
         marginTop: 15,
         alignItems: 'center',
 
@@ -320,7 +321,6 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
     DepositText: {
-        marginLeft: 15,
         fontFamily: "MetaNormal-Regular",
         fontSize: 18
     },
@@ -331,6 +331,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#E0DFFB",
         borderRadius: 5,
         marginTop: 10,
+        marginLeft: 25,
         flexDirection: "row"
     },
 

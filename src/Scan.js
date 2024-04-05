@@ -48,7 +48,7 @@ export default function Scan({ navigation }) {
                 credit: "0",
                 nolPoints: "0",
                 cardName: "Nol Card",
-                depositPoints: "no deposits"
+                depositsMade: "false"
 
             }).then(() => {
                 console.log('data submitted');

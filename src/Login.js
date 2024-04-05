@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc, addDoc } from 'firebase/firestore'
 import { db } from '../firebaseconfig';
 
 export let exportedUserName = '';
@@ -41,11 +41,11 @@ export default function Login({ navigation }) {
 
     //function to send values to firebase
     function create() {
-
         //submit data
-        setDoc(doc(db, 'users', userName),     //users is the name of the collection, LA is the ID
+        setDoc(doc(db, 'users', userName),
             {
                 username: userName,
+                depositsMade: 'false'
             })
 
     }

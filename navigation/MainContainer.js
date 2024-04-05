@@ -84,6 +84,6 @@ export default function MainContainer() {
                 <Tab.Screen name={profileName} component={Profile} options={{ headerShown: false }} />
 
             </Tab.Navigator>
-        </NavigationContainer >
+        </NavigationContainer>
     )
 }
