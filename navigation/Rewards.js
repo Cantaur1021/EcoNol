@@ -108,10 +108,16 @@ export default function RewardsScreen() {
                                 <Text style={{ fontWeight: 'bold', color: '#5D5FEF', fontSize: 15 }}>X</Text>
                             </Pressable>
                         </View>
-
                         <View>
+                            <Text style={{ fontFamily: 'Meta-Bold-Roman', marginTop: 30, fontSize: 30 }}>Scan the QR code</Text>
+                        </View>
+                        <View style={styles.qr}>
                             <QRCode
-                                value='hello'></QRCode>
+
+                                value='hello'
+                                backgroundColor='#F6F6FF'
+                                logoBackgroundColor='#F6F6FF'
+                                size={200}></QRCode>
                         </View>
 
                     </View>
@@ -255,7 +261,7 @@ export default function RewardsScreen() {
 const styles = StyleSheet.create({
 
     carouselRoot: {
-
+        marginTop: 50,
         width: screenWidth,
         height: 300
     },
@@ -265,6 +271,11 @@ const styles = StyleSheet.create({
         marginTop: 15,
         alignItems: 'center',
 
+    },
+    qr: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 40
     },
     carouselText: {
         color: "#79797D",
@@ -333,7 +344,7 @@ const styles = StyleSheet.create({
 
     },
     modalHeader: {
-        fontFamily: 'Meta-Bold-Roman',
+        fontFamily: 'MetaNormal-Regular',
         fontSize: 20,
     },
 
