@@ -14,23 +14,18 @@ import { doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore'
 import { db } from '../firebaseconfig';
 import { exportedUserName } from '../src/Login';
 
-
-
-
-
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
 const sliderWidth = screenWidth
 const itemWidth = screenWidth
 
+export let exportedNolCardsData;
 
 export default function Home({ navigation }) {
-
-
 
     const [dataValue, setData] = useState([]);
     const [deposits, setDeposits] = useState([]);
     const [checkDeposit, setCheck] = useState('');
+
 
 
     useEffect(() => {
@@ -50,6 +45,7 @@ export default function Home({ navigation }) {
                     });
                 });
                 setData(data);
+                exportedNolCardsData = data
 
 
                 depositsSnap.forEach((doc) => {
@@ -225,15 +221,10 @@ export default function Home({ navigation }) {
                     {renderDotIndicators()}
                 </View>
 
-
-
                 <View>
                     {renderDeposits()}
                 </View>
 
-                {/* <View style={styles.navBar}>
-                    <NavBar page="Home"></NavBar>
-                </View> */}
             </View>
         </View>
     )

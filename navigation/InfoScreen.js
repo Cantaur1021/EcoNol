@@ -4,7 +4,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Biodegradable from '../Biodegradable';
-
+import { exportedNolCardsData } from './HomeScreen';
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 
@@ -24,6 +24,7 @@ export default function InfoScreen() {
     useEffect(() => {
         async function prepare() {
             await SplashScreen.preventAutoHideAsync();
+            console.log(exportedNolCardsData)
         }
         prepare();
     }, [])

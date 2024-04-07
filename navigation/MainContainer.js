@@ -10,6 +10,7 @@ import MapsScreen from './MapsScreen';
 import ScanScreen from './ScanScreen';
 import InfoScreen from './InfoScreen';
 import Profile from './ProfileScreen';
+import RewardsScreen from './Rewards';
 import { Ionicons } from '@expo/vector-icons';
 
 const homeName = 'Home';
@@ -17,6 +18,7 @@ const mapsName = 'Maps';
 const scanName = 'Scan';
 const infoName = 'Info'
 const profileName = 'Profile'
+const rewardsName = 'Rewards'
 
 const focusedHome = require("../assets/icons/focusedhome.png")
 const unFocusedHome = require("../assets/icons/unfocusedhome.png")
@@ -60,7 +62,7 @@ export default function MainContainer() {
                         else if (rn === scanName) {
                             iconName = focused ? 'add-circle' : 'add-circle-outline'
                         }
-                        else if (rn === infoName) {
+                        else if (rn === rewardsName) {
                             iconName = focused ? 'list' : 'list-outline'
                         }
                         else if (rn === profileName) {
@@ -80,8 +82,9 @@ export default function MainContainer() {
                 <Tab.Screen name={homeName} component={HomeScreen} options={{ headerShown: false, }} />
                 <Tab.Screen name={mapsName} component={MapsScreen} options={{ headerShown: false }} />
                 <Tab.Screen name={scanName} component={ScanScreen} options={{ headerShown: false }} />
-                <Tab.Screen name={infoName} component={InfoScreen} options={{ headerShown: false }} />
+                <Tab.Screen name={rewardsName} component={RewardsScreen} options={{ headerShown: false }} />
                 <Tab.Screen name={profileName} component={Profile} options={{ headerShown: false }} />
+
 
             </Tab.Navigator>
         </NavigationContainer>
