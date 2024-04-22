@@ -11,6 +11,7 @@ import MainContainer from './navigation/MainContainer';
 import NavBar from './components/NavBar';
 
 
+
 const Stack = createNativeStackNavigator()
 
 
@@ -28,6 +29,7 @@ export default function App() {
           name='Login'
           component={Login}
         />
+
         <Stack.Screen
           name='Scan'
           component={Scan}

@@ -1,6 +1,6 @@
 
 
-import { StyleSheet, Text, View, Image, TextInput, Pressable, Dimensions, Button, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Pressable, Dimensions, Button, TouchableOpacity, FlatList, ScrollView, Alert } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ import Card from '../components/Card';
 import Carousel from 'react-native-snap-carousel';
 import * as Progress from 'react-native-progress'
 import NavBar from '../components/NavBar';
-import { doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore'
+import { doc, setDoc, getDoc, collection, getDocs, updateDoc } from 'firebase/firestore'
 import { db } from '../firebaseconfig';
 import { exportedUserName } from '../src/Login';
 
@@ -55,7 +55,7 @@ export default function Home({ navigation }) {
                     })
                 })
                 setDeposits(depositData);
-                console.log(depositData)
+
 
                 if (checkDeposit.exists()) {
                     const documentData = checkDeposit.data()
@@ -78,6 +78,24 @@ export default function Home({ navigation }) {
 
     const [activeIndex, setActiveIndex] = useState(0);
 
+    const redeem = async (nolNumber, nolPoints) => {
+        if (nolPoints >= '100') {
+            const docSnap = await getDoc(doc(db, '/users/' + exportedUserName + '/nolCards/' + nolNumber))
+            const data = docSnap.data()
+            const newPoints = String(Number(data.nolPoints) - 100)
+            const newCredit = String(Number(data.credit) + 1)
+            updateDoc(doc(db, 'users', exportedUserName, 'nolCards', nolNumber), {
+                nolPoints: newPoints,
+                credit: newCredit
+            })
+            Alert.alert("You dont suck", "Your points have been redeemed Successfully")
+        }
+        else {
+            Alert.alert("You Suck", "Your points have not been redeemed Successfully")
+
+        }
+    }
+
     const renderDeposits = () => {
         if (checkDeposit.depositsMade === 'false') {
             return (
@@ -98,33 +116,39 @@ export default function Home({ navigation }) {
         else {
             return (
                 <View>
-                    <View style={styles.recentDepositContainer}>
-                        <View style={styles.RecentDeposits}>
-                            <Text style={styles.DepositText}>Recent Deposits</Text>
+                    <View>
+                        <View style={styles.recentDepositContainer}>
+                            <View style={styles.RecentDeposits}>
+                                <Text style={styles.DepositText}>Recent Deposits</Text>
+                            </View>
                         </View>
                     </View>
-                    <ScrollView
-                        showsHorizontalScrollIndicator={false}
-                        decelerationRate={0}
-                        snapToAlignment={"center"}
-                        scrollEnabled={true}
-                        horizontal={false}
-                        style={styles.scrollView}>
-                        {deposits.map((deposit, index) => (
-                            <View key={index} style={styles.depositsContainer}>
-                                <View style={styles.depositTextContainer}>
-                                    <Text style={styles.typeText}>{deposit.type}</Text>
-                                    <Text style={styles.locationText}>{deposit.location}</Text>
-                                    <Text style={styles.locationText}>{deposit.time}</Text>
+                    <View style={styles.scrollViewContainer}>
+                        <ScrollView
+                            showsHorizontalScrollIndicator={false}
+                            decelerationRate={0}
+                            snapToAlignment={"center"}
+                            scrollEnabled={true}
+                            horizontal={false}
+                            style={styles.scrollView}>
+                            {console.log(deposits)}
+                            {deposits.map((deposit, index) => (
+                                <View key={index} style={styles.depositsContainer}>
+                                    <View style={styles.depositTextContainer}>
+                                        <Text style={styles.typeText}>{deposit.type}</Text>
+                                        <Text style={styles.locationText}>{deposit.location}</Text>
+                                        <Text style={styles.locationText}>{deposit.time}</Text>
+                                    </View>
+                                    <View style={styles.depositPointsContainer}>
+                                        <Text style={styles.points}>+{deposit.depositPoints}</Text>
+                                        <Text style={styles.nolPoints}>NolPoints</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.depositPointsContainer}>
-                                    <Text style={styles.points}>+{deposit.depositPoints}</Text>
-                                    <Text style={styles.nolPoints}>NolPoints</Text>
-                                </View>
-                            </View>
-                        ))}
-                    </ScrollView>
+                            ))}
+                        </ScrollView>
+                    </View>
                 </View>
+
             )
         }
     }
@@ -144,7 +168,7 @@ export default function Home({ navigation }) {
                             <Text style={styles.pointNumber}>{item.nolPoints} </Text>
                             <Text style={styles.pointsText}>NolPoints</Text>
                         </View>
-                        <Pressable style={styles.redeemButton} onPress={() => navigation.navigate('Maps')}>
+                        <Pressable style={styles.redeemButton} onPress={() => { redeem(item.nolNumber, item.nolPoints) }}>
                             <Text style={styles.redeemText}>Redeem</Text>
                         </Pressable>
                     </View>
@@ -243,7 +267,10 @@ const styles = StyleSheet.create({
 
         marginTop: 25,
     },
-
+    scrollViewContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     carouselRoot: {
         width: screenWidth,
         height: 300
@@ -329,7 +356,7 @@ const styles = StyleSheet.create({
         flexDirection: "row"
     },
     scrollView: {
-        flex: 1,
+
         height: screenHeight
     },
     navBar: {
@@ -350,7 +377,7 @@ const styles = StyleSheet.create({
         color: "#5E5E6A"
     },
     depositPointsContainer: {
-        marginLeft: 169,
+        marginLeft: 150,
         marginTop: 12,
         alignItems: "center"
     },
@@ -360,7 +387,8 @@ const styles = StyleSheet.create({
     },
     nolPoints: {
         fontFamily: "MetaNormal-Regular",
-        fontSize: 15
+        fontSize: 15,
+
     },
     noDeposits: {
         justifyContent: 'center',

@@ -18,6 +18,7 @@ const mapsName = 'Maps';
 const scanName = 'Scan';
 const infoName = 'Info'
 const profileName = 'Profile'
+
 const rewardsName = 'Rewards'
 
 const focusedHome = require("../assets/icons/focusedhome.png")

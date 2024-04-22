@@ -45,7 +45,7 @@ export default function Login({ navigation }) {
         setDoc(doc(db, 'users', userName),
             {
                 username: userName,
-                depositsMade: 'false'
+
             })
 
     }
@@ -104,11 +104,22 @@ export default function Login({ navigation }) {
                                 Create Account
                             </Text>
                         </Pressable>
-                        <Pressable style={styles.guestButton}>
-                            <Text style={styles.guestText}>
-                                Continue as Guest
-                            </Text>
+                    </View>
+                    <View style={styles.uaePassContainer}>
+                        <Pressable style={styles.UAEPass}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View>
+                                    <Image style={{ height: 30, width: 30, marginRight: 5 }} source={require("../assets/icons/500-5009298_uae-pass-app-uae-pass-hd-png-download.png")} />
+                                </View>
+                                <View style={{ marginTop: 5 }}>
+                                    <Text style={styles.uaePassText}>
+                                        Sign in with UAE PASS
+                                    </Text>
+                                </View>
+                            </View>
+
                         </Pressable>
+
                     </View>
                 </View>
             </View>
@@ -209,7 +220,11 @@ const styles = StyleSheet.create({
         width: 363,
         height: 50,
     },
-
+    uaePassContainer: {
+        marginTop: 35,
+        width: 363,
+        height: 50,
+    },
     Button1: {
         height: "100%",
         width: "100%",
@@ -219,11 +234,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-
+    UAEPass: {
+        height: "100%",
+        width: "100%",
+        borderColor: "#1eab75",
+        borderWidth: 1,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     buttonText1: {
         fontFamily: "Meta-Bold-Roman",
         color: "black",
         fontSize: 16,
+    },
+    uaePassText: {
+        fontWeight: 'bold',
+        fontSize: 17
     },
 
     guestButton: {
