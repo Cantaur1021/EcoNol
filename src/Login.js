@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import { doc, setDoc, addDoc } from 'firebase/firestore'
+import { doc, setDoc, addDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebaseconfig';
 
 export let exportedUserName = '';
@@ -40,14 +40,28 @@ export default function Login({ navigation }) {
 
 
     //function to send values to firebase
-    function create() {
-        //submit data
-        setDoc(doc(db, 'users', userName),
-            {
-                username: userName,
+    async function create() {
 
-            })
+        const userExists = await checkUserExists(userName)
+        if (userExists) {
+            navigation.navigate('Main')
+        }
+        else {
+            setDoc(doc(db, 'users', userName),
+                {
+                    username: userName,
+                    depositsMade: "false"
+                })
+            navigation.navigate('Scan')
+        }
+    }
 
+
+    const checkUserExists = async (username) => {
+        const docRef = doc(db, 'users', username)
+        const docSnap = await getDoc(docRef);
+
+        return docSnap.exists()
     }
 
 
@@ -81,7 +95,7 @@ export default function Login({ navigation }) {
                         {/* Put onPress as well */}
                         <Pressable style={styles.Button}
                             onPress={() => {
-                                navigation.navigate('Scan')
+
                                 create()
 
                             }}>
@@ -97,14 +111,7 @@ export default function Login({ navigation }) {
                         </View>
                         <View style={{ flex: 1, height: 1, backgroundColor: 'black' }} />
                     </View>
-                    <View style={styles.createAccount}>
-                        {/* Put onPress as well */}
-                        <Pressable style={styles.Button1}>
-                            <Text style={styles.buttonText1}>
-                                Create Account
-                            </Text>
-                        </Pressable>
-                    </View>
+
                     <View style={styles.uaePassContainer}>
                         <Pressable style={styles.UAEPass}>
                             <View style={{ flexDirection: 'row' }}>

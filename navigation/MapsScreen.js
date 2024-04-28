@@ -3,11 +3,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useRef, useState } from 'react';
 import Header from '../components/Header';
-import Card from '../components/Card';
-import data from '../data'
-import Carousel from 'react-native-snap-carousel';
-import * as Progress from 'react-native-progress'
-import NavBar from '../components/NavBar';
+
 import MapView, { Marker, Overlay, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 
 

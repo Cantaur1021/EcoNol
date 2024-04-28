@@ -1,4 +1,3 @@
-import firebase from 'firebase/compat/app'
 import { getFirestore } from 'firebase/firestore'
 import { initializeApp } from 'firebase/app'
 
@@ -13,9 +12,6 @@ const firebaseConfig = {
     measurementId: "G-WRF7DLLZXM"
 };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig)
-}
 
 const app = initializeApp(firebaseConfig)
 

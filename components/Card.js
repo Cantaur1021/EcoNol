@@ -1,9 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TextInput, Pressable } from 'react-native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react';
-import { router } from 'expo-router';
+import { StyleSheet, Text, View, Image } from 'react-native';
+
 
 export default function Card(props) {
     return (

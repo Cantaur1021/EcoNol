@@ -1,12 +1,9 @@
-
-
+import Header from '../components/Header';
+import Card from '../components/Card';
 import { StyleSheet, Text, View, Image, TextInput, Pressable, Dimensions, Button, TouchableOpacity, FlatList, ScrollView, Alert } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
-import Header from '../components/Header';
-import Card from '../components/Card';
-
 import Carousel from 'react-native-snap-carousel';
 import * as Progress from 'react-native-progress'
 import NavBar from '../components/NavBar';
@@ -25,15 +22,10 @@ export default function Home({ navigation }) {
     const [dataValue, setData] = useState([]);
     const [deposits, setDeposits] = useState([]);
     const [checkDeposit, setCheck] = useState('');
-
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const docSnap = await getDocs(collection(db, '/users/' + exportedUserName + '/nolCards'))
-                const checkDeposit = await getDoc(doc(db, 'users', exportedUserName));
-
                 const depositsSnap = await getDocs(collection(db, '/users/' + exportedUserName + '/Deposits/'))
                 let depositData = [];
                 let data = [];
@@ -57,6 +49,7 @@ export default function Home({ navigation }) {
                 setDeposits(depositData);
 
 
+                const checkDeposit = await getDoc(doc(db, 'users', exportedUserName));
                 if (checkDeposit.exists()) {
                     const documentData = checkDeposit.data()
                     setCheck(documentData);
@@ -79,7 +72,8 @@ export default function Home({ navigation }) {
     const [activeIndex, setActiveIndex] = useState(0);
 
     const redeem = async (nolNumber, nolPoints) => {
-        if (nolPoints >= '100') {
+        if (Number(nolPoints) >= 100) {
+            Alert.alert("Success!", "Your Points Have Been Redeemed Successfully")
             const docSnap = await getDoc(doc(db, '/users/' + exportedUserName + '/nolCards/' + nolNumber))
             const data = docSnap.data()
             const newPoints = String(Number(data.nolPoints) - 100)
@@ -88,10 +82,10 @@ export default function Home({ navigation }) {
                 nolPoints: newPoints,
                 credit: newCredit
             })
-            Alert.alert("You dont suck", "Your points have been redeemed Successfully")
+
         }
         else {
-            Alert.alert("You Suck", "Your points have not been redeemed Successfully")
+            Alert.alert("Failed!", "Insufficient Points for This Transaction")
 
         }
     }
@@ -126,7 +120,7 @@ export default function Home({ navigation }) {
                     <View style={styles.scrollViewContainer}>
                         <ScrollView
                             showsHorizontalScrollIndicator={false}
-                            decelerationRate={0}
+
                             snapToAlignment={"center"}
                             scrollEnabled={true}
                             horizontal={false}
@@ -153,14 +147,13 @@ export default function Home({ navigation }) {
         }
     }
 
-    const renderItem = ({ item, index }) => {
+    const renderItem = ({ item }) => {
 
         return (
             <View style={styles.carouselRoot}>
                 <View style={styles.carouselContainer}>
                     <Card Text={item.nolNumber} balance={'AED' + item.credit}></Card>
                     <Text style={styles.carouselText}>Nol Card</Text>
-                    {/* make it so that the subtext can be changed and updated in data folder */}
                 </View>
                 <View style={styles.pointSystem}>
                     <View style={styles.point}>
@@ -223,7 +216,7 @@ export default function Home({ navigation }) {
 
     return (
         <View>
-            <Header welcome="Home" subText="Say hello to the future of sustainability"></Header>
+            <Header welcome="Home" subText={'Welcome ' + exportedUserName}></Header>
             <View style={styles.root}>
                 <View style={styles.carouselContainer}>
                     <FlatList
@@ -250,7 +243,7 @@ export default function Home({ navigation }) {
                 </View>
 
             </View>
-        </View>
+        </View >
     )
 }
 
